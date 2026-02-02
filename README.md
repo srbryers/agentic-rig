@@ -1,17 +1,17 @@
-# agentrig
+# agent-rig
 
 Rig up your project for agentic coding. Analyzes any codebase and generates a complete Claude Code configuration (CLAUDE.md, hooks, skills, subagents, MCP servers).
 
 ## Install
 
 ```bash
-npm i -g agentrig
+npm i -g @srbryers/agent-rig
 ```
 
 Or use without installing:
 
 ```bash
-npx agentrig install
+npx @srbryers/agent-rig install
 ```
 
 ## Usage
