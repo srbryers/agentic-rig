@@ -238,7 +238,7 @@ When modifying `src/templates.mjs`, test against all four bundled templates to v
 
 - Version is tracked in `package.json` (`"version": "0.4.0"`)
 - **Publishing is done via GitHub Actions workflow** — never run `npm publish` manually
-- To release: bump version in `package.json`, commit, push, and create a git tag (`git tag v0.x.x && git push origin v0.x.x`). The workflow handles the rest.
+- To release: bump version in `package.json`, commit, push, then create a **GitHub Release** (via `gh release create v0.x.x --generate-notes`). The workflow triggers on release publish.
 - The `"files"` field limits the published package to `bin/`, `src/`, and `skills/`
 
 ---
