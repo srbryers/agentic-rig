@@ -249,28 +249,25 @@ Source: [D] = discovered via `npx skills find`, [T] = from template recommendati
 
 **Template items:** If a template matched in Step 1.11, its items are included in the tables above with `[T]`-prefixed IDs: `TC1` (CLAUDE.md sections), `TH1` (hooks), `TS1` (skills), `TA1` (agents), `TM1` (MCP servers). Template items appear after heuristic items in each table. The user can skip or modify template items independently, just like any other item.
 
-After the report, prompt the user:
+After the report, use the **AskUserQuestion** tool to get the user's decision. Do NOT output a freeform text prompt — always use AskUserQuestion for structured input.
 
-```
-Reply with:
-- **approve** — generate all recommendations
-- **skip [IDs]** — approve all except listed items (e.g., "skip H2, M3, E1")
-- **detail [ID]** — show more detail about a specific item
-- **modify [ID] [change]** — adjust a recommendation before generating
-- **cancel** — abort without generating anything
+Ask one question with these options:
 
-E# items are external community skills. Approved E# items will be installed via `npx skills add` in Phase 3.
-```
+- **Approve all** — generate all recommendations
+- **Skip some items** — user specifies which IDs to exclude (via the "Other" freeform input, e.g., "skip H2, M3, E1")
+- **Show detail** — user specifies an item ID to inspect (via "Other", e.g., "detail H1")
+- **Cancel** — abort without generating anything
+
+If the user selects "Skip some items" or "Show detail", parse their freeform input for IDs, handle accordingly, then re-prompt with AskUserQuestion again until you get a final "Approve all" or "Cancel".
 
 Wait for the user's response. Do not proceed to Phase 3 until you have explicit approval.
 
 ### Handling User Responses
 
-- **"approve"** — proceed to Phase 3 with all items
-- **"skip H2, M3"** — remove those items, proceed with the rest
-- **"detail H1"** — show the full generated content for that item, then re-prompt
-- **"modify S1 change name to write-test"** — adjust and re-prompt
-- **"cancel"** — stop, output nothing
+- **"Approve all"** — proceed to Phase 3 with all items
+- **"Skip some items"** + IDs — remove those items, re-prompt with AskUserQuestion for final confirmation
+- **"Show detail"** + ID — show the full generated content for that item, then re-prompt with AskUserQuestion
+- **"Cancel"** — stop, output nothing
 
 ---
 
