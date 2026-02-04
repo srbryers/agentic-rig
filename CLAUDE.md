@@ -94,6 +94,7 @@ npm publish --access public
 │   │   │   ├── shopify-app.md
 │   │   │   └── shopify-theme.md
 │   │   └── references/           # Heuristic and output format docs
+│   │       ├── agent-workflow-practices.md
 │   │       ├── analysis-heuristics.md
 │   │       ├── claude-md-template.md
 │   │       ├── output-templates.md
@@ -115,6 +116,8 @@ All data is stored within the project's `.claude/` directory:
 .claude/
 ├── skills/                # Installed skill files (via agentic-rig install)
 ├── agentic-rig/
+│   ├── context/           # Session context snapshots (/checkpoint, /recap)
+│   │   └── session-YYYY-MM-DD.md
 │   ├── feedback/          # Session JSON files (append-only)
 │   │   └── {sessionId}.json
 │   └── templates/         # User-generated templates

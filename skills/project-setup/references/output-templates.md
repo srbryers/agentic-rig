@@ -504,7 +504,101 @@ When reviewing code for security:
 
 ---
 
-## 5. File Ordering
+## 5. Session Context Skills
+
+These skills provide context durability across compaction events and session boundaries. Recommend for medium and large codebases (100+ files).
+
+### /checkpoint Skill
+
+```markdown
+---
+name: checkpoint
+description: Save current session context to a markdown file for recovery after compaction or across sessions
+invocation: user
+user_invocation: /checkpoint
+---
+
+# Checkpoint Context
+
+Save a snapshot of the current working context to `.claude/agentic-rig/context/`.
+
+## Steps
+
+1. Determine the current date for the filename (`session-YYYY-MM-DD.md`)
+2. Gather context:
+   - Current task description (from conversation or plan files)
+   - Key decisions made during this session
+   - Files modified (from `git status` and `git diff --name-only`)
+   - Progress on current work (completed steps, remaining steps)
+   - Any important notes or context that should survive compaction
+3. Check if a context file already exists for today
+   - If yes, update it (append or replace sections as appropriate)
+   - If no, create a new file
+4. Write to `.claude/agentic-rig/context/session-YYYY-MM-DD.md`
+
+## Format
+
+Use the standard context file format:
+- `## Current Task` — one-line description
+- `## Key Decisions` — bulleted list of decisions with rationale
+- `## Files Modified` — bulleted list of changed files with brief notes
+- `## Progress` — checklist of steps (completed and remaining)
+- `## Notes` — any additional context
+
+Keep concise — aim for under 40 lines. This is a snapshot, not a full log.
+```
+
+### /recap Skill
+
+```markdown
+---
+name: recap
+description: Recover working context from saved checkpoints, git state, and project files
+invocation: user
+user_invocation: /recap
+---
+
+# Context Recap
+
+Recover working context after compaction or when starting a new session.
+
+## Steps
+
+1. Read CLAUDE.md for project overview, build commands, conventions
+2. If CLAUDE.md has a Key Files & Entry Points section, read those files for context. If not, identify key files from manifest files (package.json, pyproject.toml, Cargo.toml, go.mod) and entry points.
+3. Check `.claude/agentic-rig/context/` for saved session context files
+   - Read the most recent context file (or last 2-3 if recent)
+   - Extract: current task, key decisions, progress, notes
+4. Run `git status` to identify modified/staged files
+5. Run `git log --oneline -10` for recent commit history
+6. Check for plan files (`.claude/plans/`) and TODO files
+7. If context files reference specific files, read those files for deeper context
+
+## Output Format
+
+### Project Context
+- Project name, type, key frameworks (from CLAUDE.md)
+
+### Saved Session Context
+- Last checkpoint date and summary (from .claude/agentic-rig/context/)
+- Current task and progress
+- Key decisions that should inform continued work
+
+### Current State
+- Branch name and recent commits (last 5)
+- Modified files and what they relate to
+- Active plans or TODOs
+
+### Suggested Next Steps
+- Based on checkpoint progress + modified files, what to continue
+- Most relevant files to read to pick up where you left off
+
+Keep under 60 lines. Goal is quick context recovery, not repeating everything.
+```
+
+---
+
+## 6. File Ordering
 
 When generating multiple files, follow this order to ensure directories exist before files are written into them:
 

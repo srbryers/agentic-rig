@@ -81,6 +81,18 @@ If multiple languages exist but it's NOT a monorepo (e.g., a Python backend with
 [ACTUAL_STRUCTURE_FROM_ANALYSIS]
 ```
 
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| `package.json` | Dependencies, scripts, project metadata |
+| [MAIN_ENTRY from `main` or `scripts.start`] | Application entry point |
+| [IF_DETECTED: `tsconfig.json`] | TypeScript configuration |
+| [ROUTER_OR_SCHEMA: main router file or API schema] | Route definitions / API surface |
+| [IF_DETECTED: `.env.example`] | Required environment variables |
+
 [IF_DETECTED_ENV:
 ## Environment Variables
 
@@ -188,6 +200,18 @@ Copy `.env.example` to `.env` and fill in the required values:
 [ACTUAL_STRUCTURE_FROM_ANALYSIS]
 ```
 
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| [MANIFEST: `pyproject.toml` or `requirements.txt`] | Dependencies, project metadata |
+| [MAIN_ENTRY: `app/main.py` or detected entry point] | Application entry point |
+| [IF_DETECTED: `alembic.ini` or migration config] | Database migration configuration |
+| [ROUTER_OR_SCHEMA: main router or URL config file] | Route definitions / API surface |
+| [IF_DETECTED: `.env.example`] | Required environment variables |
+
 [SAME_OPTIONAL_SECTIONS_AS_NODE: Environment Variables, Security Notes, API Conventions, Deployment]
 ```
 
@@ -258,6 +282,17 @@ Follow standard Rust conventions:
 ```
 [ACTUAL_STRUCTURE_FROM_ANALYSIS]
 ```
+
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| `Cargo.toml` | Dependencies, features, workspace config |
+| [MAIN_ENTRY: `src/main.rs` or `src/lib.rs`] | Application or library entry point |
+| [IF_WORKSPACE: workspace `Cargo.toml`] | Workspace manifest and member listing |
+| [IF_DETECTED: main handler or router module] | Request handling / API surface |
 
 [IF_WORKSPACE:
 ## Workspace Crates
@@ -331,6 +366,17 @@ Follow standard Go conventions:
 ```
 [ACTUAL_STRUCTURE_FROM_ANALYSIS]
 ```
+
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| `go.mod` | Dependencies, module path, Go version |
+| [MAIN_ENTRY: `main.go` or `cmd/*/main.go`] | Application entry point |
+| [IF_DETECTED: main handler or router file] | Route definitions / API surface |
+| [IF_DETECTED: `.env.example`] | Required environment variables |
 ```
 
 ---
@@ -368,6 +414,17 @@ Follow standard Go conventions:
 ```
 [ACTUAL_STRUCTURE_FROM_ANALYSIS]
 ```
+
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| [MANIFEST: `pom.xml` or `build.gradle`] | Dependencies, build config, plugins |
+| [MAIN_ENTRY: main class or application file] | Application entry point |
+| [IF_DETECTED: `application.yml` or `application.properties`] | Application configuration |
+| [IF_DETECTED: main controller or router class] | Route definitions / API surface |
 ```
 
 ---
@@ -410,6 +467,17 @@ dotnet publish -c Release
 ```
 [ACTUAL_STRUCTURE_FROM_ANALYSIS]
 ```
+
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| [MANIFEST: `*.csproj` or `*.sln`] | Dependencies, project config |
+| `Program.cs` | Application entry point |
+| [IF_DETECTED: `appsettings.json`] | Application configuration |
+| [IF_DETECTED: main controller or routing file] | Route definitions / API surface |
 ```
 
 ---
@@ -454,6 +522,16 @@ This is a monorepo managed by [Turborepo | Nx | Lerna | Yarn Workspaces | pnpm W
 
 ### [Package 2 Name]
 [BRIEF_NOTES]
+
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| [ROOT_MANIFEST: root `package.json`, `Cargo.toml`, or `go.work`] | Workspace listing, shared config |
+| [WORKSPACE_CONFIG: `turbo.json`, `nx.json`, or `pnpm-workspace.yaml`] | Build orchestration config |
+| [PER_PACKAGE_ENTRY: entry point for each key package] | Package-level entry points |
 
 ## Code Style
 
@@ -500,6 +578,16 @@ make test
 [ACTUAL_STRUCTURE_FROM_ANALYSIS]
 ```
 
+## Key Files & Entry Points
+
+Files to read first when resuming work or recovering context:
+
+| File | Purpose |
+|------|---------|
+| [DETECTED_MANIFEST: primary manifest file] | Dependencies, project metadata |
+| [DETECTED_ENTRY: main entry point] | Application entry point |
+| [IF_DETECTED: `Makefile`] | Build commands and targets |
+
 ## Code Style
 
 [ANY_DETECTED_FORMATTERS_OR_CONVENTIONS]
@@ -531,3 +619,4 @@ When filling in templates:
 5. **Preserve existing content** — If merging with an existing CLAUDE.md, keep the user's custom sections and only add/update sections from the template
 6. **Order sections by importance** — Project Overview, Build & Run, and Testing should always come first
 7. **Always include attribution** — The `agentic-rig` footer must be the last thing in every generated CLAUDE.md
+8. **Key Files section** — Always include. Populate with: manifest file, main entry point, primary config files, main route/schema file. Limit to 5–8 entries, ordered by importance.

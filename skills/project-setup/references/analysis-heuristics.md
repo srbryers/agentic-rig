@@ -66,6 +66,10 @@ Skills provide reusable workflows invoked by users or automatically by Claude.
 | OpenAPI/Swagger spec (`openapi.yaml`, `swagger.json`) | api-client | `/api-client` | Generate or update API client code from OpenAPI spec | OpenAPI spec file detected |
 | Docker/docker-compose files | docker-setup | `/docker-setup` | Generate or update Docker configuration | Dockerfile or docker-compose.yml exists |
 | CI/CD configuration (`.github/workflows/`, `.gitlab-ci.yml`) | ci-update | `/ci-update` | Update CI/CD pipeline configuration | CI config detected |
+| Git repo + medium/large codebase (100+ files) | checkpoint | `/checkpoint` | Save current session context to markdown for recovery after compaction | Medium or large codebase |
+| Git repo + medium/large codebase (100+ files) | recap | `/recap` | Recover working context from saved checkpoints, git state, and project files | Medium or large codebase |
+| `tools/` directory with 3+ files (agent project) | new-tool | `/new-tool` | Scaffold a new agent tool with input/output schema, handler, and test stub | Tool directory pattern established |
+| `prompts/` directory detected (agent project) | new-prompt | `/new-prompt` | Create a new prompt template with variables and metadata | Prompt template pattern established |
 
 ### Auto-Invocable Skills (Claude uses automatically)
 
@@ -87,6 +91,8 @@ Subagents are specialized Claude instances for focused tasks.
 | Test directory with <50% coverage or sparse tests | test-writer | `test-writer.md` | sonnet | Read, Write, Grep, Glob | Generates comprehensive tests for untested modules | Test framework exists but coverage appears low |
 | Monorepo with 3+ packages | dependency-checker | `dependency-checker.md` | haiku | Read, Grep, Glob | Checks for dependency conflicts and version mismatches across packages | Monorepo detected |
 | API routes + documentation | api-validator | `api-validator.md` | haiku | Read, Grep, Glob | Validates API changes against documentation and type contracts | API layer with docs or types |
+| Agent session storage detected (Group B signals) | session-auditor | `session-auditor.md` | haiku | Read, Grep, Glob | Audits session storage for unbounded growth, missing TTLs, cross-tenant data leaks | Session/chat storage signals found |
+| Agent prompt templates detected (Group D signals) | prompt-reviewer | `prompt-reviewer.md` | haiku | Read, Grep, Glob | Reviews prompt templates for injection risks, missing variables, inconsistent formatting | Prompt directory or template files found |
 
 ### Agent Model Selection Guidelines
 
@@ -132,7 +138,14 @@ Determine which sections to include in the generated CLAUDE.md based on signals.
 | Auth/security patterns, API routes, database/ORM, or payment patterns | Security Notes | Required | Auth approach, sensitive areas to be careful with |
 | API layer detected | API Conventions | Optional | Endpoint patterns, response format, error handling |
 | Multiple languages or workspaces | Monorepo Guide | Required (monorepo) | Workspace layout, cross-package dependencies |
-| Agent SDK usage | Agent SDK Notes | Optional | Agent patterns, custom tool definitions |
+| Agent signals: 2+ groups matched | Agent Architecture | Required | SDK used, agent types, orchestration pattern, tool registration approach |
+| Agent signals: 2+ groups matched | Session Management | Required | Storage backend, session ID format, lifecycle operations, TTL/cleanup policy |
+| Agent signals: 2+ groups matched | Context Management | Required | Window strategy, token budget split, tool output handling |
+| Agent signals: 3+ groups matched | Memory Architecture | Recommended | Memory tiers in use, storage backends per tier, retrieval strategy |
+| Agent signals: 3+ groups matched | Workflow Patterns | Recommended | Execution pattern, checkpoint strategy, error recovery |
+| Agent signals: 3+ groups matched | Tool Management | Optional | Tool directory structure, registration pattern, schemas, testing |
+| Agent signals: 3+ groups matched | Prompt Management | Optional | Prompt file location, templating system, variable substitution |
+| Agent signals: 3+ groups matched | Testing Agent Workflows | Optional | Test tool calls, mock LLM responses, validate conversation flows |
 | CI/CD detected | CI/CD | Optional | Pipeline structure, required checks |
 | Package manager detected | Dependencies | Recommended | How to install, add, update dependencies |
 | `.env` files exist without `.gitignore` coverage | Secrets Management | Required | Add `.env` to `.gitignore`, use `.env.example` for documenting required vars |
@@ -157,6 +170,9 @@ Some recommendations depend on multiple signals:
 | Monorepo + Turborepo/Nx | Workspace-aware hooks, dependency-checker agent | Monorepo-specific tooling |
 | FastAPI + Pydantic | API doc skill + strict type-check notes | API-first Python setup |
 | Go + protobuf | Proto generation notes in CLAUDE.md | gRPC workflow |
+| Agent SDK + Redis | Session Management sections + Redis MCP server | Redis likely used for session caching |
+| Agent SDK + Vector DB (pinecone, weaviate, chromadb, pgvector) | Memory Architecture sections + episodic memory guidance | Vector DB indicates semantic memory needs |
+| Agent SDK + test framework (jest, pytest, vitest) | Testing Agent Workflows section in CLAUDE.md | Document how to test agent-specific patterns |
 
 ---
 
@@ -176,6 +192,7 @@ When many recommendations are possible, prioritize by impact:
 7. MCP servers for detected services
 8. Code review agent (large projects)
 9. Security-reviewer agent (any project with network-accessible endpoints or user data)
+10. Context continuity skills (`/checkpoint`, `/recap`) for medium+ projects
 
 ### Low Priority (recommend for large/complex projects)
 10. Specialized agents (UI reviewer)

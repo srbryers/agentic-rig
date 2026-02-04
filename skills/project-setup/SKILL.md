@@ -17,6 +17,7 @@ Read these reference files before starting analysis:
 - `.claude/skills/project-setup/references/output-templates.md` — Templates for every generated file
 - `.claude/skills/project-setup/references/claude-md-template.md` — CLAUDE.md templates per project type
 - `.claude/skills/project-setup/references/windows-considerations.md` — Platform-specific handling
+- `.claude/skills/project-setup/references/agent-workflow-practices.md` — Agent framework detection and recommendations
 
 ## Execution Workflow
 
@@ -135,14 +136,25 @@ Check for existing `.claude/` directory:
 
 If existing config is found, plan to **merge** new recommendations into it, not overwrite. Note which items already exist so you can skip or update them.
 
-### Step 1.10: Check for Agent SDK Usage
+### Step 1.10: Check for Agent SDK / Agent Framework Usage
 
-Search for:
-- `@anthropic-ai/claude-code-sdk` in package.json
-- `claude-code-sdk` imports in source files
-- Custom agent patterns, orchestration code
+Search for agent signals across four groups (see `references/agent-workflow-practices.md` Section 1 for full tables):
 
-This indicates advanced usage that may benefit from specialized subagents.
+**Group A — SDK Dependencies:** Check manifest files for known agent SDK packages:
+- Node.js: `@anthropic-ai/sdk`, `openai`, `langchain`, `@langchain/*`, `ai`, `@ai-sdk/*`, `llamaindex`, `@mastra/*`, `crewai`
+- Python: `anthropic`, `openai`, `langchain`, `crewai`, `autogen`, `llama-index`, `dspy`, `haystack-ai`, `semantic-kernel`
+- Other: `async-openai` (Rust), `go-openai` (Go), `Microsoft.SemanticKernel` (.NET)
+
+**Group B — Session / Chat Storage:** Grep for `chat_history`, `chat_messages`, `conversation_history`, `message_history` in source. Look for LLM message arrays (`messages.push`/`addMessage` near Group A SDK imports), and DB tables with `role`/`content` columns. Do NOT match on generic `session`/`thread` alone — require co-location with Group A SDK usage.
+
+**Group C — Orchestration Code:** Grep for `StateGraph`, `register_tool`, `@tool`, `defineTool`, `tool_choice`, `handoff`, `transfer_to_agent` near Group A SDK imports. Look for multi-agent config files (`agents.yaml`, `crew.yaml`). Do NOT match on generic `workflow`/`pipeline`/`chain` alone — these are common in CI/CD and data processing.
+
+**Group D — Agent File Structure:** Check for `agents/` directories with files importing Group A SDKs, `prompts/` directories, `.prompt` files, `agent.yaml`/`crew.yaml` configs. A `tools/` directory alone is NOT sufficient — verify it contains LLM tool definitions, not general utility code.
+
+Record the matched group count (0–4) and the specific signals found. Use confidence thresholds:
+- **0–1 groups:** Skip agent-specific recommendations
+- **2 groups:** Include core agent recommendations (Agent Architecture, Session Management, Context Management sections)
+- **3+ groups:** Include full agent recommendations (core + Memory Architecture, Workflow Patterns, Tool Management, Prompt Management, Testing Agent Workflows)
 
 ### Step 1.11: Match Project-Type Templates
 
