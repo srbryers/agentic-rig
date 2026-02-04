@@ -1,4 +1,4 @@
-# agentic-rig (v0.6.4)
+# agentic-rig (v0.6.5)
 
 ## Project Overview
 
@@ -262,7 +262,7 @@ When modifying `src/templates.mjs`, test against all four bundled templates to v
 
 ## Releases
 
-- Version is tracked in `package.json` (`"version": "0.6.4"`)
+- Version is tracked in `package.json` (`"version": "0.6.5"`)
 - **Publishing is done via GitHub Actions workflow** — never run `npm publish` manually
 - To release, run `npm run release <version>` (e.g., `npm run release 0.7.0`). This script (`scripts/release.mjs`) bumps `package.json`, commits, pushes, and creates a GitHub Release in one step. The workflow triggers on release publish.
 - The `"files"` field limits the published package to `bin/`, `src/`, and `skills/`
